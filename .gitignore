@@ -1,0 +1,10 @@
+# Dành cho Visual Studio
+*.sln.docstates
+*.suo
+*.user
+*.vs/
+.vs/
+
+# Dành cho file build
+[Bb]in/
+[Oo]bj/
