@@ -1,6 +1,6 @@
 ﻿using CoffeeShop.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using CoffeeShop.Web.Handlers; // <--- Cần using này
+using CoffeeShop.Web.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration; // Lấy configuration
@@ -14,7 +14,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
 // 1a. Đăng ký AuthTokenHandler với DI (Dependency Injection)
-// DÒNG MỚI (1/3)
 builder.Services.AddTransient<AuthTokenHandler>();
 
 // 2. Tạo một "named client" (client có tên) để gọi WebApi
@@ -27,7 +26,6 @@ builder.Services.AddHttpClient("WebApi", client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 })
     // BẢO HTTPCLIENT SỬ DỤNG HANDLER ĐỂ TỰ ĐỘNG GẮN TOKEN
-    // DÒNG MỚI (2/3)
     .AddHttpMessageHandler<AuthTokenHandler>();
 
 // 3. Đăng ký HttpContextAccessor để có thể đọc/ghi Cookie (lưu Token)
@@ -41,12 +39,15 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Đăng ký tất cả các Service gọi API
 builder.Services.AddScoped<IProductApiService, ProductApiService>();
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<ICartApiService, CartApiService>();
 builder.Services.AddScoped<IOrderApiService, OrderApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
-// 5. Cấu hình Cookie Authentication 
+// (Chúng ta sẽ thêm IAdminService và IReportService vào đây sau)
+
+// 5. Cấu hình Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -56,6 +57,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 
+// --- KẾT THÚC PHẦN CẤU HÌNH API ---
 
 
 var app = builder.Build();
@@ -69,19 +71,28 @@ else
 {
     app.UseExceptionHandler("/Home/Error");
 }
-// app.UseHttpsRedirection(); // Bạn đã comment, rất tốt
+// app.UseHttpsRedirection(); 
 app.UseStaticFiles();
 
 app.UseRouting();
 
 // Cấu hình Middleware Pipeline
-// (Thứ tự này rất quan trọng)
-app.UseAuthentication(); // 1. Xác định bạn là ai
-app.UseSession();        // 2. Tải Session
-app.UseAuthorization();  // 3. Kiểm tra bạn được làm gì
+app.UseAuthentication();
+app.UseSession();
+app.UseAuthorization();
 
+// === PHẦN SỬA CHO BƯỚC 32 ===
+
+// THÊM ROUTE CHO ADMIN AREA (PHẢI ĐẶT TRƯỚC ROUTE "default")
+app.MapControllerRoute(
+    name: "Admin",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+// Route "default" (đã có)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// === KẾT THÚC SỬA ===
 
 app.Run();

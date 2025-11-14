@@ -77,5 +77,36 @@ namespace CoffeeShop.Web.Services
             }
             return null;
         }
+
+        public async Task<BaseResponseDto> CreateProductAsync(CreateUpdateProductDto dto)
+        {
+            // POST /api/admin/products
+            // (Token Admin đã được AuthTokenHandler tự động đính kèm)
+            var response = await _httpClient.PostAsJsonAsync("admin/products", dto);
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var baseResponse = JsonSerializer.Deserialize<BaseResponseDto>(jsonString, JsonOptions());
+            return baseResponse;
+        }
+
+        public async Task<BaseResponseDto> UpdateProductAsync(int productId, CreateUpdateProductDto dto)
+        {
+            // PUT /api/admin/products/{productId}
+            var response = await _httpClient.PutAsJsonAsync($"admin/products/{productId}", dto);
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var baseResponse = JsonSerializer.Deserialize<BaseResponseDto>(jsonString, JsonOptions());
+            return baseResponse;
+        }
+
+        public async Task<BaseResponseDto> DeleteProductAsync(int productId)
+        {
+            // DELETE /api/admin/products/{productId}
+            var response = await _httpClient.DeleteAsync($"admin/products/{productId}");
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var baseResponse = JsonSerializer.Deserialize<BaseResponseDto>(jsonString, JsonOptions());
+            return baseResponse;
+        }
     }
 }
