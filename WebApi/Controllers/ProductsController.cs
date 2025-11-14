@@ -41,5 +41,25 @@ namespace WebApi.Controllers
             var result = await _productService.GetAllCategoriesAsync();
             return Ok(result);
         }
+
+        // GET: /api/products/category/{categoryId}
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetProductsByCategory(int categoryId)
+        {
+            var result = await _productService.GetProductsByCategoryAsync(categoryId);
+            if (result.Result == Shared.Dtos.ResultValue.NoData)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+
+        // GET: /api/products/search?keyword=...
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] string keyword)
+        {
+            var result = await _productService.SearchProductsAsync(keyword);
+            return Ok(result);
+        }
     }
 }
