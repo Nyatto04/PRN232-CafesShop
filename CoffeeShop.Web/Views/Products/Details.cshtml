@@ -1,0 +1,47 @@
+﻿@using Shared.Dtos.ProductDtos
+@model ProductDto // Model của View này là 1 object ProductDto
+
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+
+<h2>@Model.ProductName</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="@(Model.ImageUrl ?? "https://via.placeholder.com/300")" class="img-fluid" alt="@Model.ProductName" />
+    </div>
+    <div class="col-md-6">
+        <h4>@Model.ProductName</h4>
+        <h5 class="text-muted">@Model.CategoryName</h5>
+        <h3 class="text-danger">@Model.Price.ToString("N0") VNĐ</h3>
+        
+        <p><strong>Size:</strong> @(Model.Size ?? "N/A")</p>
+        <p><strong>Mô tả:</strong> @(Model.Description ?? "Chưa có mô tả")</p>
+        <p><strong>Còn lại:</strong> @Model.Stock</p>
+
+        <hr />
+
+        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+            
+            <div class="form-group mb-2">
+                <label>Size:</label>
+                <select name="Size" class="form-control" style="max-width: 100px;">
+                    <option value="S">S</option>
+                    <option value="M" selected>M</option>
+                    <option value="L">L</option>
+                </select>
+            </div>
+            
+            <div class="form-group mb-2">
+                <label>Số lượng:</label>
+                <input type="number" name="Quantity" value="1" min="1" max="@Model.Stock" class="form-control" style="max-width: 100px;" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Thêm vào giỏ hàng</button>
+        </form>
+
+    </div>
+</div>
