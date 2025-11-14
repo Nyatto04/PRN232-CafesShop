@@ -16,8 +16,10 @@ namespace DAL.Data
         // Khai báo cho EF Core biết chúng ta có 2 bảng mới
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
-        // ===================================
 
+        // Khai báo bảng giỏ hàng
+        public DbSet<CartItem> CartItems { get; set; }
+        // -----------------------
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -32,7 +34,24 @@ namespace DAL.Data
                 .HasOne(p => p.Category) // Một Product có một Category
                 .WithMany(c => c.Products) // Một Category có nhiều Product
                 .HasForeignKey(p => p.CategoryId); // Khóa ngoại là CategoryId
-            // ========================================================
+
+
+            // Cấu hình mối quan hệ cho CartItem
+
+            // 1 User có nhiều CartItems
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.User)
+                .WithMany() // Không cần ICollection<CartItem> trong ApplicationUser
+                .HasForeignKey(ci => ci.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa User -> Xóa CartItem
+
+            // 1 Product có nhiều CartItems
+            builder.Entity<CartItem>()
+                .HasOne(ci => ci.Product)
+                .WithMany() // Không cần ICollection<CartItem> trong Product
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Product -> Xóa CartItem
+            // -----------------------
         }
     }
 }
