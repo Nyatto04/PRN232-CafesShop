@@ -45,6 +45,9 @@ builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 builder.Services.AddScoped<ICartApiService, CartApiService>();
 builder.Services.AddScoped<IOrderApiService, OrderApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
+builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<IAdminApiService, AdminApiService>();
+builder.Services.AddScoped<IReportApiService, ReportApiService>();
 // (Chúng ta sẽ thêm IAdminService và IReportService vào đây sau)
 
 // 5. Cấu hình Cookie Authentication
