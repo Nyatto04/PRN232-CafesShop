@@ -1,0 +1,58 @@
+﻿@using Shared.Dtos.OrderDtos
+@model CheckoutDto
+@{
+    ViewData["Title"] = "Thông tin Đặt hàng";
+}
+
+<h2>@ViewData["Title"]</h2>
+<p>Vui lòng điền thông tin người nhận hàng.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Checkout" method="post">
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="FullName" class="form-control" placeholder="Họ và tên" />
+                <label asp-for="FullName">Họ và tên người nhận</label>
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Phone" class="form-control" placeholder="Số điện thoại" />
+                <label asp-for="Phone">Số điện thoại</label>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <label asp-for="Email">Email (để nhận thông báo)</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <textarea asp-for="Note" class="form-control" placeholder="Ghi chú (tùy chọn)" style="height: 100px"></textarea>
+                <label asp-for="Note">Ghi chú (tùy chọn)</label>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Phương thức thanh toán</label>
+                <div class="form-check">
+                    <input type="radio" name="PaymentMethod" value="COD" class="form-check-input" checked />
+                    <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-100 btn btn-lg btn-success">Xác nhận Đặt hàng</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Tóm tắt đơn hàng</h4>
+        <p>(Phần này sẽ hiển thị tóm tắt giỏ hàng)</p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

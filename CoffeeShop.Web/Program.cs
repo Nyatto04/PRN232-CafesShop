@@ -41,14 +41,11 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Đăng ký các Service gọi API
 builder.Services.AddScoped<IProductApiService, ProductApiService>();
 builder.Services.AddScoped<IAuthApiService, AuthApiService>();
-
-// ĐĂNG KÝ SERVICE GIỎ HÀNG MỚI
-// DÒNG MỚI (3/3)
 builder.Services.AddScoped<ICartApiService, CartApiService>();
-
+builder.Services.AddScoped<IOrderApiService, OrderApiService>();
+builder.Services.AddScoped<IUserApiService, UserApiService>();
 // 5. Cấu hình Cookie Authentication 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
