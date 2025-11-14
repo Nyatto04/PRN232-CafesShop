@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DAL.Models;
+﻿using DAL.Models; // Cần using này để thấy ApplicationUser, Category, Product...
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +13,12 @@ namespace DAL.Data
         {
         }
 
+        // Khai báo cho EF Core biết chúng ta có 2 bảng mới
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        // ===================================
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -25,7 +26,13 @@ namespace DAL.Data
             // để các bảng Identity được cấu hình đúng
             base.OnModelCreating(builder);
 
-            // Cấu hình thêm (nếu cần)
+            // Cấu hình mối quan hệ 1-Nhiều (1 Category có nhiều Product)
+            // (EF Core thường tự phát hiện, nhưng làm rõ thì tốt hơn)
+            builder.Entity<Product>()
+                .HasOne(p => p.Category) // Một Product có một Category
+                .WithMany(c => c.Products) // Một Category có nhiều Product
+                .HasForeignKey(p => p.CategoryId); // Khóa ngoại là CategoryId
+            // ========================================================
         }
     }
 }
