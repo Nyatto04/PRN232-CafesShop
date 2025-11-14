@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+<p>Chào mừng bạn đến với trang quản trị.</p>
+
+<p>
+    <a asp-area="" asp-controller="Home" asp-action="Index">Quay lại trang chủ </a>
+</p>
+<hr />
+<ul>
+    <li>
+        <a asp-area="Admin" asp-controller="Products" asp-action="Index">Quản lý Sản phẩm</a>
+    </li>
+    <li>
+        <a asp-area="Admin" asp-controller="Categories" asp-action="Index">Quản lý Danh mục</a>
+    </li>
+    <li>
+        <a asp-area="Admin" asp-controller="Orders" asp-action="Index">Quản lý Đơn hàng</a>
+    </li>
+    <li>
+        <a asp-area="Admin" asp-controller="Users" asp-action="Index">Quản lý Tài khoản (Chỉ Admin)</a>
+    </li>
+</ul>
