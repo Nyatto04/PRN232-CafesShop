@@ -1,0 +1,39 @@
+﻿@model List<Shared.Dtos.OrderDtos.OrderDto>
+@{
+    ViewData["Title"] = "Quản lý Đơn hàng";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>
+    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Quay lại Dashboard</a>
+</p>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Mã ĐH</th>
+            <th>Ngày đặt</th>
+            <th>Số lượng</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái ĐH</th>
+            <th>Trạng thái TT</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr class="@(order.Status == "Pending" ? "table-warning" : "")">
+                <td>#@order.OrderId</td>
+                <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.ItemCount</td>
+                <td>@order.TotalAmount.ToString("N0") VNĐ</td>
+                <td><span class="badge bg-info">@order.Status</span></td>
+                <td><span class="badge bg-warning">@order.PaymentStatus</span></td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@order.OrderId" class="btn btn-sm btn-primary">Xem & Cập nhật</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

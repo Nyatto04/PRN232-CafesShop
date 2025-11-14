@@ -1,0 +1,81 @@
+﻿@model Shared.Dtos.ReportDtos.SalesReportDto
+@{
+    ViewData["Title"] = "Báo cáo Doanh thu";
+
+    // Lấy ngày tháng từ ViewBag để điền vào form
+    var startDate = (DateTime)ViewBag.StartDate;
+    var endDate = (DateTime)ViewBag.EndDate;
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>
+    <a asp-area="Admin" asp-controller="Home" asp-action="Index">Quay lại Dashboard</a>
+</p>
+
+<form asp-action="Index" method="get" class="row g-3 mb-4">
+    <div class="col-auto">
+        <label for="startDate" class="form-label">Từ ngày</label>
+        <input type="date" class="form-control" id="startDate" name="startDate"
+               value="@startDate.ToString("yyyy-MM-dd")">
+    </div>
+    <div class="col-auto">
+        <label for="endDate" class="form-label">Đến ngày</label>
+        <input type="date" class="form-control" id="endDate" name="endDate"
+               value="@endDate.ToString("yyyy-MM-dd")">
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Xem báo cáo</button>
+    </div>
+</form>
+
+<hr />
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Tổng Doanh thu</div>
+                <div class="card-body">
+                    <h3 class="card-title">@Model.TotalSales.ToString("N0") VNĐ</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Tổng Số đơn (đã hoàn thành)</div>
+                <div class="card-body">
+                    <h3 class="card-title">@Model.TotalOrders đơn</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Chi tiết theo ngày</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ngày</th>
+                <th>Số đơn</th>
+                <th>Doanh thu</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var day in Model.DailySales)
+            {
+                <tr>
+                    <td>@day.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@day.OrderCount</td>
+                    <td>@day.Sales.ToString("N0") VNĐ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">
+        Không tìm thấy dữ liệu báo cáo cho khoảng thời gian này.
+        (Lưu ý: Báo cáo chỉ tính các đơn hàng có trạng thái "Completed").
+    </div>
+}

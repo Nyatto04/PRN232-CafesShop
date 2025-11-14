@@ -1,0 +1,97 @@
+﻿@using Shared.Dtos.OrderDtos
+@model OrderDetailDto
+@{
+    ViewData["Title"] = $"Chi tiết Đơn hàng #" + Model.OrderId;
+}
+
+<h1>@ViewData["Title"]</h1>
+<a asp-action="Index">Quay lại Danh sách</a>
+<hr />
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Thông tin người nhận</h4>
+        <p><strong>Họ tên:</strong> @Model.FullName</p>
+        <p><strong>Số điện thoại:</strong> @Model.Phone</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Ghi chú:</strong> @(Model.Note ?? "Không có")</p>
+    </div>
+    
+    <div class="col-md-6">
+        <h4>Trạng thái đơn hàng</h4>
+        <p><strong>Ngày đặt:</strong> @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+        <p><strong>Trạng thái:</strong> <span class="badge bg-info fs-6">@Model.Status</span></p>
+        <p><strong>Thanh toán:</strong> <span class="badge bg-warning fs-6">@Model.PaymentStatus</span></p>
+        <h4 class="text-danger">Tổng tiền: @Model.TotalAmount.ToString("N0") VNĐ</h4>
+
+        <hr>
+        <div class="row">
+            <div class="col-6">
+                <form asp-action="UpdateStatus" asp-route-id="@Model.OrderId" method="post">
+                    @Html.AntiForgeryToken()
+                    <label class="form-label">Cập nhật Trạng thái ĐH:</label>
+                    <select name="status" class="form-select">
+                        <option value="Pending" selected="@(Model.Status == "Pending")">Chờ xử lý (Pending)</option>
+                        <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Đã xác nhận (Confirmed)</option>
+                        <option value="Completed" selected="@(Model.Status == "Completed")">Đã hoàn thành (Completed)</option>
+                        <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Đã hủy (Cancelled)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-2">Cập nhật</button>
+                </form>
+            </div>
+            <div class="col-6">
+                <form asp-action="UpdatePayment" asp-route-id="@Model.OrderId" method="post">
+                    @Html.AntiForgeryToken()
+                    <label class="form-label">Cập nhật Thanh toán:</label>
+                    <select name="paymentStatus" class="form-select">
+                        <option value="Unpaid" selected="@(Model.PaymentStatus == "Unpaid")">Chưa thanh toán (Unpaid)</option>
+                        <option value="Paid" selected="@(Model.PaymentStatus == "Paid")">Đã thanh toán (Paid)</option>
+                    </select>
+                    <button type="submit" class="btn btn-success mt-2">Cập nhật</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<hr />
+
+<h4>Các sản phẩm đã đặt</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Hình ảnh</th>
+            <th>Size</th>
+            <th>Giá lúc đặt</th>
+            <th>Số lượng</th>
+            <th>Tạm tính</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>
+                    <img src="@(item.ImageUrl ?? "https://via.placeholder.com/50")" style="width: 50px; height: 50px; object-fit: cover;" />
+                </td>
+                <td>@item.Size</td>
+                <td>@item.Price.ToString("N0") VNĐ</td>
+                <td>x @item.Quantity</td>
+                <td>@item.Subtotal.ToString("N0") VNĐ</td>
+            </tr>
+        }
+    </tbody>
+</table>
