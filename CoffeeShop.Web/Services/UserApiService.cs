@@ -1,4 +1,5 @@
 ﻿using Shared.Dtos;
+using Shared.Dtos.UserDtos;
 using System.Text.Json;
 
 namespace CoffeeShop.Web.Services
@@ -27,6 +28,12 @@ namespace CoffeeShop.Web.Services
             var baseResponse = JsonSerializer.Deserialize<BaseResponseDto>(jsonString, JsonOptions());
 
             return baseResponse;
+        }
+        public async Task<BaseResponseDto> UpdateProfileAsync(UpdateProfileDto dto)
+        {
+            // PUT /api/users/profile
+            var response = await _httpClient.PutAsJsonAsync("users/profile", dto);
+            return await response.Content.ReadFromJsonAsync<BaseResponseDto>();
         }
     }
 }

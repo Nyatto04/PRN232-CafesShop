@@ -1,4 +1,4 @@
-﻿@model Shared.Dtos.CategoryDto
+﻿@model Shared.Dtos.CategoryDtos.CategoryDto
 @{
     ViewData["Title"] = "Xác nhận Xóa Danh mục";
 }
@@ -20,6 +20,7 @@
     </dl>
 
     <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="CategoryId" />
         <input type="submit" value="Xóa" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
     </form>

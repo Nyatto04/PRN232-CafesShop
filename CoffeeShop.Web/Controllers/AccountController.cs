@@ -1,20 +1,26 @@
 ﻿using CoffeeShop.Web.Services;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Dtos.AuthDtos; // <-- Đảm bảo bạn có using này
+using Shared.Dtos.AuthDtos;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies; // Cần cho Cookie
-using Shared.Dtos; // <-- Thêm using này (cho ResultValue)
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Shared.Dtos;
+using Microsoft.AspNetCore.Authorization; // <-- THÊM USING NÀY
+using Shared.Dtos.UserDtos; // <-- THÊM USING NÀY
+using System.Text.Json; // <-- THÊM USING NÀY
 
 namespace CoffeeShop.Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAuthApiService _authApi;
+        private readonly IUserApiService _userApi; // <-- THÊM DÒNG NÀY (Service mới)
 
-        public AccountController(IAuthApiService authApi)
+        // SỬA LẠI CONSTRUCTOR ĐỂ NHẬN CẢ 2 SERVICE
+        public AccountController(IAuthApiService authApi, IUserApiService userApi)
         {
             _authApi = authApi;
+            _userApi = userApi; // <-- THÊM DÒNG NÀY
         }
 
         // GET: /Account/Login
@@ -35,20 +41,16 @@ namespace CoffeeShop.Web.Controllers
                 return View(loginDto);
             }
 
-            // 1. Gọi API để lấy Token
             var loginResponse = await _authApi.LoginAsync(loginDto);
 
             if (loginResponse == null)
             {
-                // Nếu API trả về null (lỗi 401 Unauthorized)
                 ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu không chính xác.");
                 return View(loginDto);
             }
 
-            // 2. LƯU TOKEN VÀO COOKIE
             await SignInUser(loginResponse);
 
-            // 3. Chuyển hướng
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
@@ -64,12 +66,9 @@ namespace CoffeeShop.Web.Controllers
                 new Claim(ClaimTypes.Name, loginResponse.FullName),
                 new Claim(ClaimTypes.Email, loginResponse.Email),
                 new Claim("uid", loginResponse.UserId), // Lưu UserId
-                
-                // Lưu JWT Token để dùng khi gọi API
-                new Claim("jwtToken", loginResponse.Token)
+                new Claim("jwtToken", loginResponse.Token) // Lưu JWT Token
             };
 
-            // Thêm các Role
             foreach (var role in loginResponse.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -80,7 +79,6 @@ namespace CoffeeShop.Web.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                // (Tùy chọn) Remember me
                 IsPersistent = true,
                 ExpiresUtc = loginResponse.Expires
             };
@@ -99,8 +97,6 @@ namespace CoffeeShop.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // === ĐÃ THÊM 2 HÀM MỚI NÀY ===
-
         // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
@@ -117,7 +113,6 @@ namespace CoffeeShop.Web.Controllers
                 return View(registerDto);
             }
 
-            // Gọi API đăng ký
             var result = await _authApi.RegisterAsync(registerDto);
 
             if (result.Result == ResultValue.Success)
@@ -125,9 +120,79 @@ namespace CoffeeShop.Web.Controllers
                 return RedirectToAction("Login");
             }
 
-            // Nếu thất bại (ví dụ: Email tồn tại)
             ModelState.AddModelError(string.Empty, result.Message);
             return View(registerDto);
+        }
+
+        // === THÊM 2 HÀM MỚI TỪ BƯỚC 39 ===
+
+        // GET: /Account/Profile
+        [Authorize(Roles = "Customer")] // Chỉ Customer mới xem được
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var result = await _userApi.GetProfileAsync();
+            if (result.Result != ResultValue.Success || result.Data == null)
+            {
+                return RedirectToAction("Index", "Home"); // Lỗi thì về trang chủ
+            }
+
+            // Deserialize data
+            var dataElement = (JsonElement)result.Data;
+            var profile = JsonSerializer.Deserialize<ProfileDto>(dataElement.GetRawText(),
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Chuyển ProfileDto (hiển thị) sang UpdateProfileDto (form)
+            var updateDto = new UpdateProfileDto
+            {
+                FullName = profile.FullName,
+                PhoneNumber = profile.PhoneNumber
+            };
+
+            return View(updateDto);
+        }
+
+        // POST: /Account/Profile
+        [Authorize(Roles = "Customer")]
+        [HttpPost]
+        public async Task<IActionResult> Profile(UpdateProfileDto updateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(updateDto);
+            }
+
+            var result = await _userApi.UpdateProfileAsync(updateDto);
+            if (result.Result != ResultValue.Success)
+            {
+                ModelState.AddModelError(string.Empty, result.Message);
+                return View(updateDto);
+            }
+
+            TempData["Success"] = "Cập nhật thông tin thành công!";
+
+            // QUAN TRỌNG: Cập nhật lại Cookie (Claim) để "Chào, [Tên]" thay đổi
+            // 1. Lấy thông tin đăng nhập cũ
+            var oldPrincipal = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (oldPrincipal.Principal != null)
+            {
+                // 2. Tạo claims mới với tên mới
+                var newClaims = oldPrincipal.Principal.Claims.ToList();
+                var nameClaim = newClaims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                if (nameClaim != null)
+                {
+                    newClaims[newClaims.IndexOf(nameClaim)] = new Claim(ClaimTypes.Name, updateDto.FullName);
+                }
+
+                // 3. Đăng nhập lại (ghi đè cookie)
+                var newIdentity = new ClaimsIdentity(newClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(newIdentity),
+                    oldPrincipal.Properties); // Dùng lại auth properties cũ
+            }
+
+            return View(updateDto); // Ở lại trang Profile và hiển thị thông báo
         }
         // ============================
     }
