@@ -1,5 +1,5 @@
 ﻿using CoffeeShop.Web.Services;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration; // Lấy configuration
 
@@ -32,9 +32,17 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddScoped<IProductApiService, ProductApiService>();
+builder.Services.AddScoped<IAuthApiService, AuthApiService>();
 
-// --- KẾT THÚC PHẦN THÊM VÀO ---
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login"; // Đường dẫn đến trang đăng nhập
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied"; // Trang từ chối truy cập
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    });
 
 var app = builder.Build();
 
@@ -45,7 +53,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// THÊM DÒNG NÀY (để dùng Session)
+app.UseAuthentication();
 app.UseSession();
 
 app.UseAuthorization();
