@@ -10,7 +10,6 @@ using Services.Interfaces;
 using Shared.Dtos.CategoryDtos;
 using Shared.Dtos;
 using Shared.Dtos.ProductDtos;
-using System.Linq;
 
 namespace Services.Implementations
 {
@@ -91,6 +90,71 @@ namespace Services.Implementations
             }
 
             return new BaseResponseDto { Result = ResultValue.Success, Data = product };
+        }
+
+        public async Task<BaseResponseDto> GetProductsByCategoryAsync(int categoryId)
+        {
+            // Kiểm tra category có tồn tại và đang active không
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c => c.CategoryId == categoryId && c.IsActive);
+
+            if (category == null)
+            {
+                return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy danh mục" };
+            }
+
+            var products = await _context.Products
+                .Where(p => p.IsActive && p.CategoryId == categoryId && p.Category.IsActive)
+                .Include(p => p.Category)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Size = p.Size,
+                    ImageUrl = p.ImageUrl,
+                    Stock = p.Stock,
+                    IsActive = p.IsActive,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category.CategoryName
+                })
+                .ToListAsync();
+
+            return new BaseResponseDto { Result = ResultValue.Success, Data = products };
+        }
+
+        public async Task<BaseResponseDto> SearchProductsAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                // Nếu keyword rỗng, trả về tất cả products
+                return await GetAllProductsAsync();
+            }
+
+            var searchKeyword = keyword.ToLower().Trim();
+
+            var products = await _context.Products
+                .Where(p => p.IsActive && p.Category.IsActive &&
+                           (p.ProductName.ToLower().Contains(searchKeyword) ||
+                            (p.Description != null && p.Description.ToLower().Contains(searchKeyword))))
+                .Include(p => p.Category)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Size = p.Size,
+                    ImageUrl = p.ImageUrl,
+                    Stock = p.Stock,
+                    IsActive = p.IsActive,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category.CategoryName
+                })
+                .ToListAsync();
+
+            return new BaseResponseDto { Result = ResultValue.Success, Data = products };
         }
 
         // === ADMIN FUNCTIONS ===

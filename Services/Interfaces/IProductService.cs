@@ -14,6 +14,8 @@ namespace Services.Interfaces
         Task<BaseResponseDto> GetAllProductsAsync();
         Task<BaseResponseDto> GetProductByIdAsync(int productId);
         Task<BaseResponseDto> GetAllCategoriesAsync();
+        Task<BaseResponseDto> GetProductsByCategoryAsync(int categoryId);
+        Task<BaseResponseDto> SearchProductsAsync(string keyword);
 
         // === Chức năng cho Admin (Quản lý) ===
         Task<BaseResponseDto> CreateProductAsync(CreateUpdateProductDto productDto);
