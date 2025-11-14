@@ -19,6 +19,11 @@ namespace DAL.Data
 
         // Khai báo bảng giỏ hàng
         public DbSet<CartItem> CartItems { get; set; }
+
+        // <--- THÊM VÀO (1/2) ---
+        // Khai báo bảng Order và OrderItem
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         // -----------------------
 
 
@@ -29,7 +34,6 @@ namespace DAL.Data
             base.OnModelCreating(builder);
 
             // Cấu hình mối quan hệ 1-Nhiều (1 Category có nhiều Product)
-            // (EF Core thường tự phát hiện, nhưng làm rõ thì tốt hơn)
             builder.Entity<Product>()
                 .HasOne(p => p.Category) // Một Product có một Category
                 .WithMany(c => c.Products) // Một Category có nhiều Product
@@ -51,6 +55,29 @@ namespace DAL.Data
                 .WithMany() // Không cần ICollection<CartItem> trong Product
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Cascade); // Khi xóa Product -> Xóa CartItem
+
+
+            // Cấu hình cho Order
+
+            // 1 User có nhiều Orders
+            builder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany() // Không cần ICollection<Order> trong ApplicationUser
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // QUAN TRỌNG: Không cho xóa User nếu User đó có Order
+
+            // Cấu hình cho OrderItem
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems) // Dùng ICollection<OrderItem> trong Order
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade); // Xóa Order -> Xóa OrderItem
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany() // Không cần ICollection<OrderItem> trong Product
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict); // Không cho xóa Product nếu đã có người đặt
             // -----------------------
         }
     }
