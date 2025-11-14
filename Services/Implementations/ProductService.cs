@@ -7,6 +7,7 @@ using DAL.Data;
 using DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
+using Shared.Dtos.CategoryDtos;
 using Shared.Dtos;
 using Shared.Dtos.ProductDtos;
 using System.Linq;

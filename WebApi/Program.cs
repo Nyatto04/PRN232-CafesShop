@@ -41,6 +41,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddHttpContextAccessor(); // Cần để lấy URL (tạo link confirm) - CHỈ CẦN 1 DÒNG
 
 // --- 5. Cấu hình Xác thực (Authentication) - Rất quan trọng ---
