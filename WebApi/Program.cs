@@ -37,8 +37,10 @@ builder.Services.Configure<MailSettings>(configuration.GetSection("MailSettings"
 
 // --- 4. Đăng ký Service (DI - Dependency Injection) ---
 // Đăng ký các Service từ project Services
-builder.Services.AddScoped<IAuthService, AuthService>(); // BỎ COMMENT DÒNG NÀY
+builder.Services.AddScoped<IAuthService, AuthService>(); 
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddHttpContextAccessor(); // Cần để lấy URL (tạo link confirm) - CHỈ CẦN 1 DÒNG
 
 // --- 5. Cấu hình Xác thực (Authentication) - Rất quan trọng ---
@@ -116,6 +118,21 @@ builder.Services.AddSwaggerGen(c =>
 
 // === BUILD APP ===
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        // Gọi hàm Seed từ DbSeeder
+        await DbSeeder.SeedRolesAndAdminAsync(services);
+        logger.LogInformation("Khởi tạo dữ liệu (seed) Role và Admin thành công.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Đã xảy ra lỗi khi khởi tạo dữ liệu (seeding).");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
