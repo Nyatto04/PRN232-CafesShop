@@ -1,0 +1,76 @@
+﻿@using Shared.Dtos.CartDtos
+@model List<CartItemDto>
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Hình ảnh</th>
+                <th>Giá</th>
+                <th>Size</th>
+                <th>Số lượng</th>
+                <th>Tạm tính</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>
+                        <img src="@(item.ImageUrl ?? "https://via.placeholder.com/50")" style="width: 50px; height: 50px; object-fit: cover;" />
+                    </td>
+                    <td>@item.Price.ToString("N0") VNĐ</td>
+                    <td>@item.Size</td>
+                    <td>
+                        <form asp-action="Update" asp-route-id="@item.CartItemId" method="post" style="display: flex;">
+                            <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" style="width: 70px;" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary ms-1">Cập nhật</button>
+                        </form>
+                    </td>
+                    <td>@item.Subtotal.ToString("N0") VNĐ</td>
+                    <td>
+                        <form asp-action="Remove" asp-route-id="@item.CartItemId" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-end"><strong>Tổng cộng:</strong></td>
+                <td>
+                    <strong class="text-danger">@ViewBag.TotalAmount.ToString("N0") VNĐ</strong>
+                </td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="text-end">
+        <a asp-controller="Order" asp-action="Checkout" class="btn btn-success">Tiến hành Đặt hàng</a>
+    </div>
+}
+else
+{
+    <p>Giỏ hàng của bạn đang rỗng.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Tiếp tục mua sắm</a>
+}
+
+@if (TempData["CartError"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["CartError"]</div>
+}
+@if (TempData["CartSuccess"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["CartSuccess"]</div>
+}
