@@ -1,0 +1,39 @@
+﻿@using Shared.Dtos.ProductDtos // Import DTO để View hiểu ProductDto là gì
+@model List<ProductDto> // Model của View này là một List<ProductDto>
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+    <div class="text-center">
+        <h1 class="display-4">Chào mừng bạn đến Coffee Shop</h1>
+    </div>
+
+    <hr />
+
+    <h3>Sản Phẩm Của Chúng Tôi</h3>
+
+    <div class="row">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var product in Model)
+        {
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <img src="@(product.ImageUrl ?? "https://via.placeholder.com/150")" class="card-img-top" alt="@product.ProductName">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.ProductName</h5>
+                            <p class="card-text">@product.CategoryName</p>
+                            <p class="card-text"><strong>@product.Price.ToString("N0") VNĐ</strong></p>
+
+                            <a href="/Products/Details/@product.ProductId" class="btn btn-primary">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+        }
+    }
+    else
+    {
+            <p>Hiện chưa có sản phẩm nào.</p>
+    }
+    </div>
