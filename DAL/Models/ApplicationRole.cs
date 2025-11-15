@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DAL.Models
 {
-    // Dùng để tạo 3 Role: "Admin", "Staff", "Customer"
     public class ApplicationRole : IdentityRole
     {
         public string Description { get; set; }

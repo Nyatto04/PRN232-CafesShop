@@ -4,38 +4,41 @@
     ViewData["Title"] = "Đăng nhập";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+                <p class="text-center text-muted mb-4">Đăng nhập để tiếp tục mua sắm</p>
+                <section>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Email" class="form-label">Email</label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Password" class="form-label">Mật khẩu</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Password" class="form-label">Mật khẩu</label>
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+                        <div>
+                            <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng nhập</button>
+                        </div>
 
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng nhập</button>
-                </div>
-
-                <div class="mt-3">
-                    <p>
-                        <a asp-action="Register">Đăng ký tài khoản mới?</a>
-                    </p>
-                </div>
-            </form>
-        </section>
+                        <div class="mt-3 text-center">
+                            <p>
+                                Chưa có tài khoản? <a asp-action="Register">Đăng ký ngay</a>
+                            </p>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
     </div>
 </div>
 

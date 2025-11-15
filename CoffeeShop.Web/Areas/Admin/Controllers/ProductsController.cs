@@ -1,13 +1,13 @@
 ﻿using CoffeeShop.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // Cần cho SelectList
+using Microsoft.AspNetCore.Mvc.Rendering; 
 using Shared.Dtos.ProductDtos;
 
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Chỉ Admin được quản lý sản phẩm
+    [Authorize(Roles = "Admin,Staff")]
     public class ProductsController : Controller
     {
         private readonly IProductApiService _productApi;
@@ -17,29 +17,24 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             _productApi = productApi;
         }
 
-        // GET: /Admin/Products
         public async Task<IActionResult> Index()
         {
-            // Gọi hàm public GetProductsAsync (vì Admin cũng cần xem)
             var products = await _productApi.GetProductsAsync();
             return View(products);
         }
 
-        // Hàm helper để lấy danh sách Category cho dropdown
         private async Task LoadCategoriesAsync()
         {
             var categories = await _productApi.GetCategoriesAsync();
             ViewBag.Categories = new SelectList(categories, "CategoryId", "CategoryName");
         }
 
-        // GET: /Admin/Products/Create
         public async Task<IActionResult> Create()
         {
-            await LoadCategoriesAsync(); // Tải danh mục cho dropdown
+            await LoadCategoriesAsync(); 
             return View();
         }
 
-        // POST: /Admin/Products/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUpdateProductDto productDto)
@@ -54,11 +49,9 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 ModelState.AddModelError(string.Empty, result.Message);
             }
 
-            await LoadCategoriesAsync(); // Tải lại danh mục nếu có lỗi
+            await LoadCategoriesAsync();
             return View(productDto);
         }
-
-        // GET: /Admin/Products/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productApi.GetProductByIdAsync(id);
@@ -67,7 +60,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // Chuyển từ ProductDto (hiển thị) sang CreateUpdateProductDto (form)
             var updateDto = new CreateUpdateProductDto
             {
                 ProductName = product.ProductName,
@@ -84,7 +76,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(updateDto);
         }
 
-        // POST: /Admin/Products/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CreateUpdateProductDto productDto)
@@ -103,7 +94,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(productDto);
         }
 
-        // GET: /Admin/Products/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productApi.GetProductByIdAsync(id);
@@ -111,10 +101,9 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(product); // Gửi ProductDto đến View
+            return View(product);
         }
 
-        // POST: /Admin/Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

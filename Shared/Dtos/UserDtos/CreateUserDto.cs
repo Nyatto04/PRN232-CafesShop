@@ -23,6 +23,6 @@ namespace Shared.Dtos.UserDtos
         public string PhoneNumber { get; set; }
 
         [Required]
-        public string Role { get; set; } // "Staff" hoặc "Customer"
+        public string Role { get; set; } 
     }
 }

@@ -10,9 +10,11 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CoffeeShop.Web</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <strong>Coffee Shop</strong>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,17 +22,17 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Giỏ hàng</a>
+                            <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Giỏ hàng</a>
                         </li>
 
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Home" asp-action="Index">Quản lý (Admin)</a>
+                                <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Quản lý (Admin)</a>
                             </li>
                         }
                     </ul>
@@ -39,23 +41,23 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Profile" title="Manage">Chào, @User.Identity.Name!</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Profile" title="Manage">Chào, @User.Identity.Name!</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Order" asp-action="History">Đơn hàng của tôi</a>
+                                <a class="nav-link" asp-controller="Order" asp-action="History">Đơn hàng của tôi</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
                             </li>
                         }
                     </ul>
@@ -70,8 +72,13 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - CoffeeShop.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            <p class="mb-0">
+                &copy; 2025 - <strong>Coffee Shop</strong> - Nơi hương vị cà phê gặp gỡ tâm hồn
+            </p>
+            <p class="mb-0 mt-2">
+                <small>Được làm với tâm huyết và sự kiên trì </small>
+            </p>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

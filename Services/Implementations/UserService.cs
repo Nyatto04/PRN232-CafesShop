@@ -53,7 +53,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy người dùng" };
             }
 
-            // Cập nhật thông tin
             user.FullName = updateProfileDto.FullName;
             user.PhoneNumber = updateProfileDto.PhoneNumber;
 

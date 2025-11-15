@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Shared.Dtos;
 using Shared.Dtos.UserDtos;
-using System.Security.Claims; // Cần để đọc Token
+using System.Security.Claims; 
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // BẮT BUỘC: Ai muốn gọi Controller này đều phải đăng nhập
+    [Authorize] 
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -19,16 +19,13 @@ namespace WebApi.Controllers
             _userService = userService;
         }
 
-        // Hàm helper để lấy UserId từ JWT Token
         private string GetCurrentUserId()
         {
-            // "uid" là claim chúng ta đã thêm vào khi tạo token (trong AuthService)
             return User.FindFirstValue("uid");
         }
 
-        // GET /api/users/profile
         [HttpGet("profile")]
-        [Authorize(Roles = "Customer")] // Chỉ Customer mới được gọi
+        [Authorize(Roles = "Customer")] 
         public async Task<IActionResult> GetProfile()
         {
             var userId = GetCurrentUserId();
@@ -41,9 +38,8 @@ namespace WebApi.Controllers
             return NotFound(result);
         }
 
-        // PUT /api/users/profile
         [HttpPut("profile")]
-        [Authorize(Roles = "Customer")] // Chỉ Customer mới được gọi
+        [Authorize(Roles = "Customer")] 
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
         {
             if (!ModelState.IsValid)

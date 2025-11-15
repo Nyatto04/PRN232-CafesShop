@@ -6,9 +6,9 @@ using Shared.Dtos.ProductDtos;
 
 namespace WebApi.Controllers.Admin
 {
-    [Route("api/admin/[controller]")] // Đường dẫn là /api/admin/products
+    [Route("api/admin/[controller]")] 
     [ApiController]
-    [Authorize(Roles = "Admin")] // BẮT BUỘC: Chỉ có Admin mới được gọi
+    [Authorize(Roles = "Admin,Staff")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -18,7 +18,6 @@ namespace WebApi.Controllers.Admin
             _productService = productService;
         }
 
-        // POST: /api/admin/products
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] CreateUpdateProductDto productDto)
         {
@@ -34,15 +33,12 @@ namespace WebApi.Controllers.Admin
                 return BadRequest(result);
             }
 
-            // Trả về 201 CreatedAtAction (chuẩn RESTful)
-            // Cần hàm GetProductById ở controller public
             return CreatedAtAction(
-            "GetProductById", // <-- Sửa ở đây: Dùng tên hàm dạng chuỗi
+            "GetProductById", 
             new { controller = "Products", id = ((DAL.Models.Product)result.Data).ProductId },
             result);
         }
 
-        // PUT: /api/admin/products/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateUpdateProductDto productDto)
         {
@@ -65,7 +61,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // DELETE: /api/admin/products/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {

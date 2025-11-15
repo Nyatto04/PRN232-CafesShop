@@ -10,7 +10,7 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // Chỉ Admin được quản lý tài khoản
+    [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -20,7 +20,6 @@ namespace WebApi.Controllers.Admin
             _adminService = adminService;
         }
 
-        // GET: /api/admin/users
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -28,7 +27,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // GET: /api/admin/users/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -40,7 +38,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // POST: /api/admin/users
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
         {
@@ -54,10 +51,9 @@ namespace WebApi.Controllers.Admin
             {
                 return BadRequest(result);
             }
-            return Ok(result); // Trả về 200 OK
+            return Ok(result); 
         }
 
-        // PUT: /api/admin/users/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserDto updateUserDto)
         {
@@ -78,7 +74,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // DELETE: /api/admin/users/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

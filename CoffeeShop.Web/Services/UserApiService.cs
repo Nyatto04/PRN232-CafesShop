@@ -20,8 +20,6 @@ namespace CoffeeShop.Web.Services
 
         public async Task<BaseResponseDto> GetProfileAsync()
         {
-            // GET /api/users/profile
-            // (Token đã được AuthTokenHandler tự động đính kèm)
             var response = await _httpClient.GetAsync("users/profile");
 
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -31,7 +29,6 @@ namespace CoffeeShop.Web.Services
         }
         public async Task<BaseResponseDto> UpdateProfileAsync(UpdateProfileDto dto)
         {
-            // PUT /api/users/profile
             var response = await _httpClient.PutAsJsonAsync("users/profile", dto);
             return await response.Content.ReadFromJsonAsync<BaseResponseDto>();
         }

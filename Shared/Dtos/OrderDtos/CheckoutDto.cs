@@ -9,7 +9,6 @@ namespace Shared.Dtos.OrderDtos
 {
     public class CheckoutDto
     {
-        // Thông tin người nhận (cho phép user ghi đè)
         [Required(ErrorMessage = "Họ tên là bắt buộc")]
         public string FullName { get; set; }
 
@@ -20,9 +19,9 @@ namespace Shared.Dtos.OrderDtos
         public string Email { get; set; }
 
         [MaxLength(500)]
-        public string Note { get; set; } // Ghi chú
+        public string Note { get; set; } 
 
         [Required]
-        public string PaymentMethod { get; set; } = "COD"; // Mặc định là COD
+        public string PaymentMethod { get; set; } = "COD"; 
     }
 }

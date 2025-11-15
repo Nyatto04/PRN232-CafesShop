@@ -10,13 +10,11 @@ namespace Services.Interfaces
 {
     public interface IOrderService
     {
-        // === Chức năng cho Customer ===
         Task<BaseResponseDto> CreateOrderAsync(string userId, CheckoutDto checkoutDto);
         Task<BaseResponseDto> GetMyOrdersAsync(string userId);
         Task<BaseResponseDto> GetMyOrderDetailsAsync(string userId, int orderId);
 
-        // === Chức năng cho Admin/Staff ===
-        Task<BaseResponseDto> GetAllOrdersAsync(); // Lấy tất cả
+        Task<BaseResponseDto> GetAllOrdersAsync();
         Task<BaseResponseDto> GetOrderDetailsForAdminAsync(int orderId);
         Task<BaseResponseDto> UpdateOrderStatusAsync(int orderId, string status);
         Task<BaseResponseDto> UpdatePaymentStatusAsync(int orderId, string paymentStatus);

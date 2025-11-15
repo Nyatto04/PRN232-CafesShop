@@ -12,6 +12,6 @@ namespace Shared.Dtos.OrderDtos
         public string Status { get; set; }
         public string PaymentStatus { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int ItemCount { get; set; } // Tổng số lượng sản phẩm
+        public int ItemCount { get; set; }
     }
 }

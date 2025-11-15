@@ -14,12 +14,10 @@ namespace Shared.Dtos.OrderDtos
         public string Note { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        // Thông tin người nhận
         public string FullName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
 
-        // Danh sách sản phẩm trong đơn hàng
         public List<OrderItemDto> OrderItems { get; set; }
     }
 }

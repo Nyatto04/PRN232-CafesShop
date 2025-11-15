@@ -14,7 +14,6 @@ namespace WebApi.Controllers
             _productService = productService;
         }
 
-        // GET: /api/products
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
@@ -22,7 +21,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // GET: /api/products/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -34,7 +32,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // GET: /api/products/categories
         [HttpGet("categories")]
         public async Task<IActionResult> GetAllCategories()
         {
@@ -42,7 +39,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // GET: /api/products/category/{categoryId}
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetProductsByCategory(int categoryId)
         {
@@ -54,7 +50,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // GET: /api/products/search?keyword=...
         [HttpGet("search")]
         public async Task<IActionResult> SearchProducts([FromQuery] string keyword)
         {

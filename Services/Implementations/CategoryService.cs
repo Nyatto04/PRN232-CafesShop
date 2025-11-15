@@ -21,7 +21,6 @@ namespace Services.Implementations
             _context = context;
         }
 
-        // Lấy tất cả (cho Admin, bao gồm cả cái đã Inactive)
         public async Task<BaseResponseDto> AdminGetAllCategoriesAsync()
         {
             var categories = await _context.Categories
@@ -59,7 +58,6 @@ namespace Services.Implementations
 
         public async Task<BaseResponseDto> CreateCategoryAsync(CreateUpdateCategoryDto categoryDto)
         {
-            // Kiểm tra trùng tên
             var existing = await _context.Categories
                                 .FirstOrDefaultAsync(c => c.CategoryName.ToLower() == categoryDto.CategoryName.ToLower());
             if (existing != null)
@@ -88,7 +86,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy danh mục" };
             }
 
-            // Kiểm tra trùng tên (nhưng trừ chính nó ra)
             var existing = await _context.Categories
                                 .FirstOrDefaultAsync(c => c.CategoryName.ToLower() == categoryDto.CategoryName.ToLower()
                                                         && c.CategoryId != categoryId);
@@ -115,7 +112,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy danh mục" };
             }
 
-            // Kiểm tra xem có sản phẩm nào đang dùng danh mục này không
             var productCount = await _context.Products.CountAsync(p => p.CategoryId == categoryId && p.IsActive);
             if (productCount > 0)
             {
@@ -126,7 +122,6 @@ namespace Services.Implementations
                 };
             }
 
-            // Xóa mềm (Soft delete)
             category.IsActive = false;
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();

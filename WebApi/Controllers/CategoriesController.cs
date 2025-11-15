@@ -17,8 +17,6 @@ namespace WebApi.Controllers
             _categoryService = categoryService;
         }
 
-        // GET: /api/categories
-        // Guest accessible - chỉ lấy categories đang active
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
@@ -26,8 +24,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // GET: /api/categories/{id}
-        // Guest accessible - chỉ lấy category đang active
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -38,7 +34,6 @@ namespace WebApi.Controllers
                 return NotFound(result);
             }
 
-            // Kiểm tra nếu category không active thì không cho guest xem
             if (result.Data is Shared.Dtos.CategoryDtos.CategoryDto categoryDto && !categoryDto.IsActive)
             {
                 return NotFound(new BaseResponseDto 
