@@ -17,28 +17,25 @@ namespace DAL.Models
         public int Quantity { get; set; }
 
         [MaxLength(50)]
-        public string Size { get; set; } // Size lúc đặt
+        public string Size { get; set; } 
 
-        // --- Thông tin snapshot của sản phẩm (lưu lại phòng khi Admin đổi giá) ---
         [Required]
         [Column(TypeName = "decimal(10, 2)")]
-        public decimal Price { get; set; } // Giá sản phẩm lúc đặt
+        public decimal Price { get; set; } 
 
         [Required]
         [MaxLength(200)]
-        public string ProductName { get; set; } // Tên sản phẩm lúc đặt
+        public string ProductName { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
-        public decimal Subtotal { get; set; } // Price * Quantity
+        public decimal Subtotal { get; set; } 
 
-        // --- Foreign Keys ---
         [Required]
         public int OrderId { get; set; }
 
         [Required]
-        public int ProductId { get; set; } // Vẫn lưu ID sản phẩm để tham chiếu
+        public int ProductId { get; set; }
 
-        // --- Navigation Properties ---
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; }
 

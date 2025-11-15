@@ -46,18 +46,16 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Email đã tồn tại" };
             }
 
-            // Tạo ApplicationUser (từ DAL.Models)
             ApplicationUser user = new ApplicationUser()
             {
                 Email = registerDto.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = registerDto.Email, // Dùng Email làm UserName
+                UserName = registerDto.Email,
                 FullName = registerDto.FullName,
-                IsActive = false, // Đặt là false, chờ confirm email
-                EmailConfirmed = false // Đặt là false, chờ confirm email
+                IsActive = false, 
+                EmailConfirmed = false 
             };
 
-            // DÙNG IDENTITY: Tự động băm mật khẩu và lưu user
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
@@ -66,7 +64,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = $"Tạo user thất bại: {errors}" };
             }
 
-            // === Tự động tạo Role nếu chưa có ===
             if (!await _roleManager.RoleExistsAsync("Customer"))
                 await _roleManager.CreateAsync(new ApplicationRole { Name = "Customer", Description = "Khách hàng" });
             if (!await _roleManager.RoleExistsAsync("Staff"))
@@ -74,22 +71,16 @@ namespace Services.Implementations
             if (!await _roleManager.RoleExistsAsync("Admin"))
                 await _roleManager.CreateAsync(new ApplicationRole { Name = "Admin", Description = "Quản trị viên" });
 
-            // Gán role "Customer" cho user mới
             await _userManager.AddToRoleAsync(user, "Customer");
 
-            // === Gửi Email Xác thực ===
-            // 1. DÙNG IDENTITY: Tạo token xác thực email
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            // 2. Mã hóa token để an toàn trên URL
             var encodedToken = System.Net.WebUtility.UrlEncode(token);
 
-            // 3. Tạo link callback (trỏ về API của bạn)
             var request = _httpContextAccessor.HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}"; // Tự động lấy http://localhost:5146
             var callbackUrl = $"{baseUrl}/api/Auth/ConfirmEmail?userId={user.Id}&token={encodedToken}";
 
-            // 4. DÙNG MAILKIT: Gửi email
             string subject = "Xác nhận tài khoản Coffee Shop";
             string body = $"Chào {user.FullName},<br>Cảm ơn bạn đã đăng ký." +
                           $"Vui lòng xác nhận tài khoản bằng cách <a href='{callbackUrl}'>nhấn vào đây</a>.";
@@ -119,12 +110,10 @@ namespace Services.Implementations
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            // === KẾT THÚC SỬA ===
 
             if (result.Succeeded)
             {
-                user.IsActive = true; // Kích hoạt tài khoản
-                // user.EmailConfirmed đã tự động được set = true bởi Identity
+                user.IsActive = true;
                 await _userManager.UpdateAsync(user);
                 return new BaseResponseDto { Result = ResultValue.Success, Message = "Xác thực email thành công!" };
             }
@@ -139,13 +128,11 @@ namespace Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            // Kiểm tra user có tồn tại và mật khẩu đúng không
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Email hoặc mật khẩu không chính xác." };
             }
 
-            // Kiểm tra tài khoản đã được kích hoạt/xác thực email chưa
             if (!user.EmailConfirmed)
             {
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Tài khoản chưa được xác thực. Vui lòng kiểm tra email." };
@@ -156,14 +143,11 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Tài khoản của bạn đã bị khóa." };
             }
 
-            // DÙNG IDENTITY: Lấy các Role của user
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            // Tạo Token
-            var tokenExpires = DateTime.Now.AddHours(8); // Token hết hạn sau 8 tiếng
+            var tokenExpires = DateTime.Now.AddHours(8); 
             var token = CreateJwtToken(user, userRoles, tokenExpires);
 
-            // Tạo response trả về
             var loginResponse = new LoginResponseDto
             {
                 UserId = user.Id,
@@ -186,22 +170,19 @@ namespace Services.Implementations
         #region Hàm Private (Tạo JWT)
         private JwtSecurityToken CreateJwtToken(ApplicationUser user, IList<string> userRoles, DateTime tokenExpires)
         {
-            // Tạo các claims (thông tin chứa trong token)
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim("uid", user.Id) // Lưu UserId vào token
+                new Claim("uid", user.Id) 
             };
 
-            // Thêm các Role vào claims
             foreach (var userRole in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
 
-            // Lấy Secret Key từ appsettings.json
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
 
             var token = new JwtSecurityToken(

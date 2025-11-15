@@ -18,22 +18,20 @@ namespace DAL.Models
         public decimal TotalAmount { get; set; }
 
         [MaxLength(50)]
-        public string Status { get; set; } = "Pending"; // Pending, Confirmed, Completed, Cancelled
+        public string Status { get; set; } = "Pending"; 
 
         [MaxLength(50)]
-        public string PaymentStatus { get; set; } = "Unpaid"; // Unpaid, Paid
+        public string PaymentStatus { get; set; } = "Unpaid";
 
         [MaxLength(500)]
-        public string Note { get; set; } // Ghi chú của khách hàng
+        public string Note { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        // --- Foreign Key ---
         [Required]
-        public string UserId { get; set; } // Khóa ngoại tới ApplicationUser
+        public string UserId { get; set; } 
 
-        // --- Thông tin snapshot của khách hàng (lưu lại phòng khi họ đổi profile) ---
         [Required]
         [MaxLength(100)]
         public string FullName { get; set; }
@@ -45,11 +43,9 @@ namespace DAL.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
-        // --- Navigation Properties ---
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
 
-        // Mối quan hệ: 1 Order có nhiều OrderItems
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
         public Order()

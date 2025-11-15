@@ -1,22 +1,367 @@
+﻿/* Coffee Shop Theme - Màu nâu chủ đạo */
+:root {
+    --coffee-dark: #6F4E37; /* Màu nâu đậm */
+    --coffee-medium: #8B4513; /* Màu nâu trung bình */
+    --coffee-light: #D2B48C; /* Màu nâu nhạt */
+    --coffee-cream: #FFF8DC; /* Màu kem */
+    --coffee-gold: #CD853F; /* Màu nâu vàng */
+    --coffee-brown: #A0522D; /* Màu nâu */
+    --coffee-text: #3E2723; /* Màu chữ đậm */
+    --coffee-bg: #FAF5F0; /* Màu nền nhạt */
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    background-color: var(--coffee-bg);
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem var(--coffee-cream), 0 0 0 0.25rem var(--coffee-gold);
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: var(--coffee-bg);
+    color: var(--coffee-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header & Navigation */
+header {
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+    box-shadow: 0 2px 10px rgba(111, 78, 55, 0.3);
+}
+
+.navbar {
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%) !important;
+    border-bottom: 3px solid var(--coffee-gold) !important;
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: var(--coffee-cream) !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: var(--coffee-cream) !important;
+        transform: scale(1.05);
+    }
+
+.navbar-nav .nav-link {
+    color: var(--coffee-cream) !important;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--coffee-cream) !important;
+        transform: translateY(-2px);
+    }
+
+.navbar-toggler {
+    border-color: var(--coffee-cream);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 248, 220, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--coffee-medium);
+    border-color: var(--coffee-medium);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background-color: var(--coffee-dark);
+        border-color: var(--coffee-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(111, 78, 55, 0.3);
+    }
+
+.btn-success {
+    background-color: #8B7355;
+    border-color: #8B7355;
+    color: white;
+}
+
+    .btn-success:hover {
+        background-color: #6F5A47;
+        border-color: #6F5A47;
+    }
+
+.btn-danger {
+    background-color: #A0522D;
+    border-color: #A0522D;
+}
+
+    .btn-danger:hover {
+        background-color: #8B4513;
+        border-color: #8B4513;
+    }
+
+.btn-secondary {
+    background-color: var(--coffee-light);
+    border-color: var(--coffee-light);
+    color: var(--coffee-text);
+}
+
+    .btn-secondary:hover {
+        background-color: var(--coffee-gold);
+        border-color: var(--coffee-gold);
+        color: white;
+    }
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(111, 78, 55, 0.1);
+    transition: all 0.3s ease;
+    background-color: white;
+    overflow: hidden;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(111, 78, 55, 0.2);
+    }
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: var(--coffee-dark);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: var(--coffee-text);
+}
+
+/* Tables */
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+    .table thead {
+        background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+        color: var(--coffee-cream);
+    }
+
+        .table thead th {
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            background-color: var(--coffee-cream);
+        }
+
+    .table tbody td {
+        padding: 1rem;
+        border-color: #E8DCC6;
+    }
+
+/* Forms */
+.form-control {
+    border: 2px solid var(--coffee-light);
+    border-radius: 5px;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: var(--coffee-gold);
+        box-shadow: 0 0 0 0.2rem rgba(205, 133, 63, 0.25);
+    }
+
+.form-label {
+    color: var(--coffee-text);
+    font-weight: 500;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.alert-danger {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
+
+.alert-success {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.bg-success {
+    background-color: #8B7355 !important;
+}
+
+.bg-secondary {
+    background-color: var(--coffee-light) !important;
+    color: var(--coffee-text) !important;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+    color: var(--coffee-cream);
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    border-top: 3px solid var(--coffee-gold);
+}
+
+    .footer a {
+        color: var(--coffee-cream);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .footer a:hover {
+            color: var(--coffee-gold);
+        }
+
+/* Container */
+.container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 10px rgba(111, 78, 55, 0.1);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--coffee-dark);
+    font-weight: 600;
+}
+
+h1 {
+    border-bottom: 3px solid var(--coffee-gold);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Links */
+a {
+    color: var(--coffee-medium);
+    transition: color 0.3s ease;
+}
+
+    a:hover {
+        color: var(--coffee-dark);
+    }
+
+/* Display text */
+.display-4 {
+    color: var(--coffee-dark);
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(111, 78, 55, 0.2);
+}
+
+/* HR */
+hr {
+    border-top: 2px solid var(--coffee-light);
+    margin: 2rem 0;
+}
+
+/* Text muted */
+.text-muted {
+    color: var(--coffee-gold) !important;
+}
+
+/* Coffee Shop specific styles */
+.coffee-hero {
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+    color: var(--coffee-cream);
+    padding: 3rem 0;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+    .coffee-hero h1 {
+        color: var(--coffee-cream);
+        border: none;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+/* Product grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .card-img-top {
+        height: 150px;
+    }
 }

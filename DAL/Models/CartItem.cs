@@ -17,19 +17,16 @@ namespace DAL.Models
         public int Quantity { get; set; }
 
         [MaxLength(50)]
-        public string Size { get; set; } // Lưu lại size user đã chọn
-
+        public string Size { get; set; } 
         public DateTime AddedAt { get; set; } = DateTime.Now;
 
-        // --- Foreign Keys (Khóa ngoại) ---
 
         [Required]
-        public string UserId { get; set; } // Khóa ngoại tới ApplicationUser (string)
+        public string UserId { get; set; }
 
         [Required]
-        public int ProductId { get; set; } // Khóa ngoại tới Product (int)
+        public int ProductId { get; set; } 
 
-        // --- Navigation Properties ---
 
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }

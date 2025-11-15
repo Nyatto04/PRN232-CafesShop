@@ -22,13 +22,12 @@ namespace Services.Implementations
             _context = context;
         }
 
-        // === GUEST FUNCTIONS ===
 
         public async Task<BaseResponseDto> GetAllCategoriesAsync()
         {
             var categories = await _context.Categories
                 .Where(c => c.IsActive)
-                .Select(c => new CategoryDto // Chuyển đổi sang DTO
+                .Select(c => new CategoryDto 
                 {
                     CategoryId = c.CategoryId,
                     CategoryName = c.CategoryName,
@@ -42,10 +41,9 @@ namespace Services.Implementations
 
         public async Task<BaseResponseDto> GetAllProductsAsync()
         {
-            // Dùng LINQ để join Product và Category, sau đó chuyển sang DTO
             var products = await _context.Products
-                .Where(p => p.IsActive && p.Category.IsActive) // Chỉ lấy sp/danh mục đang active
-                .Include(p => p.Category) // Join với bảng Category
+                .Where(p => p.IsActive && p.Category.IsActive) 
+                .Include(p => p.Category) 
                 .Select(p => new ProductDto
                 {
                     ProductId = p.ProductId,
@@ -57,7 +55,7 @@ namespace Services.Implementations
                     Stock = p.Stock,
                     IsActive = p.IsActive,
                     CategoryId = p.CategoryId,
-                    CategoryName = p.Category.CategoryName // Lấy tên từ Category
+                    CategoryName = p.Category.CategoryName
                 })
                 .ToListAsync();
 
@@ -94,7 +92,6 @@ namespace Services.Implementations
 
         public async Task<BaseResponseDto> GetProductsByCategoryAsync(int categoryId)
         {
-            // Kiểm tra category có tồn tại và đang active không
             var category = await _context.Categories
                 .FirstOrDefaultAsync(c => c.CategoryId == categoryId && c.IsActive);
 
@@ -128,7 +125,6 @@ namespace Services.Implementations
         {
             if (string.IsNullOrWhiteSpace(keyword))
             {
-                // Nếu keyword rỗng, trả về tất cả products
                 return await GetAllProductsAsync();
             }
 
@@ -157,18 +153,15 @@ namespace Services.Implementations
             return new BaseResponseDto { Result = ResultValue.Success, Data = products };
         }
 
-        // === ADMIN FUNCTIONS ===
 
         public async Task<BaseResponseDto> CreateProductAsync(CreateUpdateProductDto productDto)
         {
-            // Kiểm tra xem CategoryId có tồn tại không
             var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == productDto.CategoryId);
             if (!categoryExists)
             {
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Danh mục không tồn tại" };
             }
 
-            // Chuyển DTO sang Model (Entity)
             var product = new Product
             {
                 ProductName = productDto.ProductName,
@@ -202,7 +195,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Danh mục không tồn tại" };
             }
 
-            // Cập nhật thông tin từ DTO vào Model
             product.ProductName = productDto.ProductName;
             product.Description = productDto.Description;
             product.Price = productDto.Price;
@@ -226,7 +218,6 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy sản phẩm" };
             }
 
-            // Soft delete (Xóa mềm): Chỉ đánh dấu IsActive = false
             product.IsActive = false;
 
             _context.Products.Update(product);

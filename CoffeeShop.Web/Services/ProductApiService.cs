@@ -20,9 +20,7 @@ namespace CoffeeShop.Web.Services
 
         public async Task<List<CategoryDto>> GetCategoriesAsync()
         {
-            // Sửa thành "products/categories" (viết thường, không có /)
             var response = await _httpClient.GetAsync("products/categories");
-            // ... (phần còn lại của hàm)
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -40,9 +38,7 @@ namespace CoffeeShop.Web.Services
 
         public async Task<List<ProductDto>> GetProductsAsync()
         {
-            // Sửa thành "products" (viết thường, không có /)
             var response = await _httpClient.GetAsync("products");
-            // ... (phần còn lại của hàm)
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -60,9 +56,7 @@ namespace CoffeeShop.Web.Services
 
         public async Task<ProductDto> GetProductByIdAsync(int productId)
         {
-            // Sửa thành "products/{productId}" (viết thường, không có /)
             var response = await _httpClient.GetAsync($"products/{productId}");
-            // ... (phần còn lại của hàm)
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -80,8 +74,6 @@ namespace CoffeeShop.Web.Services
 
         public async Task<BaseResponseDto> CreateProductAsync(CreateUpdateProductDto dto)
         {
-            // POST /api/admin/products
-            // (Token Admin đã được AuthTokenHandler tự động đính kèm)
             var response = await _httpClient.PostAsJsonAsync("admin/products", dto);
 
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -91,7 +83,6 @@ namespace CoffeeShop.Web.Services
 
         public async Task<BaseResponseDto> UpdateProductAsync(int productId, CreateUpdateProductDto dto)
         {
-            // PUT /api/admin/products/{productId}
             var response = await _httpClient.PutAsJsonAsync($"admin/products/{productId}", dto);
 
             var jsonString = await response.Content.ReadAsStringAsync();

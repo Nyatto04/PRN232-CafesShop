@@ -11,7 +11,7 @@ namespace Shared.Dtos.AuthDtos
         public string FullName { get; set; }
         public string Email { get; set; }
         public IList<string> Roles { get; set; }
-        public string Token { get; set; } // JWT Token
-        public DateTime Expires { get; set; } // Thời gian token hết hạn
+        public string Token { get; set; } 
+        public DateTime Expires { get; set; } 
     }
 }

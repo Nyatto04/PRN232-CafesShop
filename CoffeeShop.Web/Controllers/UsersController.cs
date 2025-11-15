@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Chỉ Admin
+    [Authorize(Roles = "Admin")] 
     public class UsersController : Controller
     {
         private readonly IAdminApiService _adminApi;
@@ -19,7 +19,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             _adminApi = adminApi;
         }
 
-        // GET: /Admin/Users
         public async Task<IActionResult> Index()
         {
             var result = await _adminApi.GetAllUsersAsync();
@@ -33,15 +32,12 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(users);
         }
 
-        // GET: /Admin/Users/Create
         public IActionResult Create()
         {
-            // Tạo danh sách Role cho dropdown
             ViewBag.Roles = new SelectList(new[] { "Staff", "Customer" });
             return View();
         }
 
-        // POST: /Admin/Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserDto userDto)
@@ -53,13 +49,12 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-                ModelState.AddModelError(string.Empty, result.Message); // Báo lỗi (VD: Email trùng)
+                ModelState.AddModelError(string.Empty, result.Message); 
             }
             ViewBag.Roles = new SelectList(new[] { "Staff", "Customer" });
             return View(userDto);
         }
 
-        // GET: /Admin/Users/Edit/string-guid
         public async Task<IActionResult> Edit(string id)
         {
             var result = await _adminApi.GetUserByIdAsync(id);
@@ -72,7 +67,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             var user = JsonSerializer.Deserialize<UserDto>(dataElement.GetRawText(),
                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            // Chuyển từ UserDto sang UpdateUserDto
             var updateDto = new UpdateUserDto
             {
                 FullName = user.FullName,
@@ -83,7 +77,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(updateDto);
         }
 
-        // POST: /Admin/Users/Edit/string-guid
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, UpdateUserDto userDto)
@@ -100,7 +93,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(userDto);
         }
 
-        // GET: /Admin/Users/Delete/string-guid
         public async Task<IActionResult> Delete(string id)
         {
             var result = await _adminApi.GetUserByIdAsync(id);
@@ -113,10 +105,9 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             var user = JsonSerializer.Deserialize<UserDto>(dataElement.GetRawText(),
                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return View(user); // Gửi UserDto đến View
+            return View(user);
         }
 
-        // POST: /Admin/Users/Delete/string-guid
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -124,7 +115,7 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             var result = await _adminApi.DeleteUserAsync(id);
             if (result.Result != ResultValue.Success)
             {
-                TempData["Error"] = result.Message; // Báo lỗi (VD: Không thể xóa Admin)
+                TempData["Error"] = result.Message;
             }
             return RedirectToAction("Index");
         }

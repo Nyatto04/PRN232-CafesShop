@@ -9,8 +9,8 @@ namespace Shared.Dtos.ReportDtos
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public decimal TotalSales { get; set; } // Tổng doanh thu
-        public int TotalOrders { get; set; } // Tổng số đơn hàng
-        public List<SalesDataPointDto> DailySales { get; set; } // Doanh thu chi tiết mỗi ngày
+        public decimal TotalSales { get; set; } 
+        public int TotalOrders { get; set; } 
+        public List<SalesDataPointDto> DailySales { get; set; }
     }
 }

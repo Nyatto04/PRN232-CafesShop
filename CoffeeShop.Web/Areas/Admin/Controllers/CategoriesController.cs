@@ -6,7 +6,7 @@ using Shared.Dtos.CategoryDtos;
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Chỉ Admin được quản lý danh mục
+    [Authorize(Roles = "Admin,Staff")]
     public class CategoriesController : Controller
     {
         private readonly ICategoryApiService _categoryApi;
@@ -16,20 +16,17 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             _categoryApi = categoryApi;
         }
 
-        // GET: /Admin/Categories
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryApi.AdminGetAllCategoriesAsync();
             return View(categories);
         }
 
-        // GET: /Admin/Categories/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: /Admin/Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUpdateCategoryDto categoryDto)
@@ -41,12 +38,11 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-                ModelState.AddModelError(string.Empty, result.Message); // Báo lỗi (ví dụ: Tên trùng)
+                ModelState.AddModelError(string.Empty, result.Message); 
             }
             return View(categoryDto);
         }
 
-        // GET: /Admin/Categories/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _categoryApi.GetCategoryByIdAsync(id);
@@ -55,7 +51,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // Chuyển từ CategoryDto sang CreateUpdateCategoryDto
             var updateDto = new CreateUpdateCategoryDto
             {
                 CategoryName = category.CategoryName,
@@ -66,7 +61,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(updateDto);
         }
 
-        // POST: /Admin/Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CreateUpdateCategoryDto categoryDto)
@@ -83,7 +77,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(categoryDto);
         }
 
-        // GET: /Admin/Categories/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _categoryApi.GetCategoryByIdAsync(id);
@@ -91,10 +84,9 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(category); // Gửi CategoryDto đến View
+            return View(category);
         }
 
-        // POST: /Admin/Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -102,7 +94,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             var result = await _categoryApi.DeleteCategoryAsync(id);
             if (result.Result != Shared.Dtos.ResultValue.Success)
             {
-                // Nếu xóa thất bại (ví dụ: còn sản phẩm)
                 TempData["Error"] = result.Message;
                 return RedirectToAction("Index");
             }

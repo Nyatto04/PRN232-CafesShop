@@ -7,7 +7,6 @@ namespace CoffeeShop.Web.Services
     {
         Task<BaseResponseDto> GetProfileAsync();
 
-        // Giờ C# đã hiểu "UpdateProfileDto" là gì
         Task<BaseResponseDto> UpdateProfileAsync(UpdateProfileDto dto);
     }
 }

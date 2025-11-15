@@ -8,7 +8,7 @@ namespace WebApi.Controllers.Admin
 {
     [Route("api/admin/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // Chỉ Admin được dùng
+    [Authorize(Roles = "Admin,Staff")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -18,7 +18,6 @@ namespace WebApi.Controllers.Admin
             _categoryService = categoryService;
         }
 
-        // GET: /api/admin/categories
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
@@ -26,7 +25,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // GET: /api/admin/categories/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -38,7 +36,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // POST: /api/admin/categories
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateUpdateCategoryDto categoryDto)
         {
@@ -52,10 +49,8 @@ namespace WebApi.Controllers.Admin
             {
                 return BadRequest(result);
             }
-            return Ok(result); // Đơn giản trả về 200 OK cho nhanh
+            return Ok(result);
         }
-
-        // PUT: /api/admin/categories/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CreateUpdateCategoryDto categoryDto)
         {
@@ -76,7 +71,6 @@ namespace WebApi.Controllers.Admin
             return Ok(result);
         }
 
-        // DELETE: /api/admin/categories/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin,Staff")] // Cho phép cả Admin và Staff
+    [Authorize(Roles = "Admin,Staff")]
     public class OrdersController : Controller
     {
         private readonly IOrderApiService _orderApi;
@@ -18,7 +18,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             _orderApi = orderApi;
         }
 
-        // GET: /Admin/Orders
         public async Task<IActionResult> Index()
         {
             var result = await _orderApi.GetAllOrdersAsync();
@@ -32,13 +31,12 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(orders);
         }
 
-        // GET: /Admin/Orders/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var result = await _orderApi.GetOrderDetailsForAdminAsync(id);
             if (result.Result != ResultValue.Success || result.Data == null)
             {
-                return RedirectToAction("Index"); // Không tìm thấy
+                return RedirectToAction("Index");
             }
 
             var dataElement = (JsonElement)result.Data;
@@ -48,7 +46,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return View(orderDetails);
         }
 
-        // POST: /Admin/Orders/UpdateStatus/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(int id, string status)
@@ -73,7 +70,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", new { id });
         }
 
-        // POST: /Admin/Orders/UpdatePayment/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePayment(int id, string paymentStatus)

@@ -3,13 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using Shared.Dtos;
 using Shared.Dtos.CartDtos;
-using System.Security.Claims; // Cần để đọc Token
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // BẮT BUỘC: Phải đăng nhập và có Role "Customer"
     [Authorize(Roles = "Customer")]
     public class CartController : ControllerBase
     {
@@ -20,15 +19,11 @@ namespace WebApi.Controllers
             _cartService = cartService;
         }
 
-        // Hàm helper để lấy UserId từ JWT Token
         private string GetCurrentUserId()
         {
-            // "uid" là claim chúng ta đã thêm vào khi tạo token (trong AuthService)
             return User.FindFirstValue("uid");
         }
 
-        // GET: /api/cart
-        // Lấy giỏ hàng của tôi
         [HttpGet]
         public async Task<IActionResult> GetMyCart()
         {
@@ -37,8 +32,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // POST: /api/cart
-        // Thêm sản phẩm vào giỏ hàng
         [HttpPost]
         public async Task<IActionResult> AddToCart([FromBody] AddCartItemDto addDto)
         {
@@ -52,14 +45,11 @@ namespace WebApi.Controllers
 
             if (result.Result != ResultValue.Success)
             {
-                // Có thể là 400 (hết hàng) hoặc 404 (không tìm thấy SP)
                 return BadRequest(result);
             }
             return Ok(result);
         }
 
-        // PUT: /api/cart/{cartItemId}
-        // Cập nhật số lượng của 1 món trong giỏ
         [HttpPut("{cartItemId}")]
         public async Task<IActionResult> UpdateCartItem(int cartItemId, [FromBody] UpdateCartItemDto updateDto)
         {
@@ -83,8 +73,6 @@ namespace WebApi.Controllers
             return Ok(result);
         }
 
-        // DELETE: /api/cart/{cartItemId}
-        // Xóa 1 món khỏi giỏ hàng
         [HttpDelete("{cartItemId}")]
         public async Task<IActionResult> RemoveFromCart(int cartItemId)
         {

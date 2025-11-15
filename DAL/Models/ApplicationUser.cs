@@ -8,7 +8,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Models
 {
-    // Kế thừa IdentityUser để có sẵn Email, PasswordHash, Phone...
     public class ApplicationUser : IdentityUser
     {
         [Required]

@@ -2,28 +2,64 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h1>Admin Dashboard</h1>
-<p>Chào mừng bạn đến với trang quản trị.</p>
+<div class="coffee-hero">
+    <h1 class="display-4">Admin Dashboard</h1>
+    <p class="lead">Trang quản trị Coffee Shop</p>
+</div>
 
-<p>
-    <a asp-area="" asp-controller="Home" asp-action="Index">Quay lại trang chủ </a>
-</p>
-<hr />
-<ul>
-    <li>
-        <a asp-area="Admin" asp-controller="Products" asp-action="Index">Quản lý Sản phẩm</a>
-    </li>
-    <li>
-        <a asp-area="Admin" asp-controller="Categories" asp-action="Index">Quản lý Danh mục</a>
-    </li>
-    <li>
-        <a asp-area="Admin" asp-controller="Orders" asp-action="Index">Quản lý Đơn hàng</a>
-    </li>
-    <li>
-        <a asp-area="Admin" asp-controller="Users" asp-action="Index">Quản lý Tài khoản (Chỉ Admin)</a>
-    </li>
-
-    <li>
-        <a asp-area="Admin" asp-controller="Reports" asp-action="Index">Xem Báo cáo (Chỉ Admin)</a>
-    </li>
-</ul>
+<div class="row mt-4">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Quản lý Sản phẩm</h5>
+                <p class="card-text">Thêm, sửa, xóa sản phẩm</p>
+                <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="btn btn-primary">Quản lý Sản phẩm</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Quản lý Danh mục</h5>
+                <p class="card-text">Quản lý các danh mục sản phẩm</p>
+                <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="btn btn-primary">Quản lý Danh mục</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Quản lý Đơn hàng</h5>
+                <p class="card-text">Xem và quản lý đơn hàng</p>
+                <a asp-area="Admin" asp-controller="Orders" asp-action="Index" class="btn btn-primary">Quản lý Đơn hàng</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Quản lý Tài khoản</h5>
+                <p class="card-text">Quản lý người dùng (Chỉ Admin)</p>
+                <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-primary">Quản lý Tài khoản</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Xem Báo cáo</h5>
+                <p class="card-text">Thống kê và báo cáo (Chỉ Admin)</p>
+                <a asp-area="Admin" asp-controller="Reports" asp-action="Index" class="btn btn-primary">Xem Báo cáo</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Về trang chủ</h5>
+                <p class="card-text">Quay lại trang chủ khách hàng</p>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-secondary">Quay lại trang chủ</a>
+            </div>
+        </div>
+    </div>
+</div>

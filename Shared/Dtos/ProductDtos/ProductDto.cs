@@ -16,7 +16,6 @@ namespace Shared.Dtos.ProductDtos
         public int Stock { get; set; }
         public bool IsActive { get; set; }
 
-        // Thông tin Category đi kèm
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
     }

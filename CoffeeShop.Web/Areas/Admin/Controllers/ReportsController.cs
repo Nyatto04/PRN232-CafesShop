@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Dtos;
-using Shared.Dtos.ReportDtos; // Cần DTOs
+using Shared.Dtos.ReportDtos; 
 using System.Text.Json;
 
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] // Chỉ Admin
+    [Authorize(Roles = "Admin")] 
     public class ReportsController : Controller
     {
         private readonly IReportApiService _reportApi;
@@ -18,15 +18,11 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             _reportApi = reportApi;
         }
 
-        // GET: /Admin/Reports/Index
-        // GET: /Admin/Reports?startDate=...&endDate=...
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
-            // Đặt giá trị mặc định (30 ngày gần nhất)
             var end = endDate ?? DateTime.Now;
             var start = startDate ?? end.AddDays(-29);
 
-            // Truyền ngày đã chọn ra View để hiển thị lại trên form
             ViewBag.StartDate = start;
             ViewBag.EndDate = end;
 
@@ -40,7 +36,6 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
 
-            // Gửi model (report) đến View
             return View(report);
         }
     }

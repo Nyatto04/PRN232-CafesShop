@@ -5,25 +5,23 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Shared.Dtos;
-using Microsoft.AspNetCore.Authorization; // <-- THÊM USING NÀY
-using Shared.Dtos.UserDtos; // <-- THÊM USING NÀY
-using System.Text.Json; // <-- THÊM USING NÀY
+using Microsoft.AspNetCore.Authorization; 
+using Shared.Dtos.UserDtos; 
+using System.Text.Json; 
 
 namespace CoffeeShop.Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IAuthApiService _authApi;
-        private readonly IUserApiService _userApi; // <-- THÊM DÒNG NÀY (Service mới)
+        private readonly IUserApiService _userApi;
 
-        // SỬA LẠI CONSTRUCTOR ĐỂ NHẬN CẢ 2 SERVICE
         public AccountController(IAuthApiService authApi, IUserApiService userApi)
         {
             _authApi = authApi;
-            _userApi = userApi; // <-- THÊM DÒNG NÀY
+            _userApi = userApi; 
         }
 
-        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
@@ -31,7 +29,6 @@ namespace CoffeeShop.Web.Controllers
             return View();
         }
 
-        // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto loginDto, string returnUrl = null)
         {
@@ -65,8 +62,8 @@ namespace CoffeeShop.Web.Controllers
             {
                 new Claim(ClaimTypes.Name, loginResponse.FullName),
                 new Claim(ClaimTypes.Email, loginResponse.Email),
-                new Claim("uid", loginResponse.UserId), // Lưu UserId
-                new Claim("jwtToken", loginResponse.Token) // Lưu JWT Token
+                new Claim("uid", loginResponse.UserId), 
+                new Claim("jwtToken", loginResponse.Token)
             };
 
             foreach (var role in loginResponse.Roles)
@@ -89,7 +86,6 @@ namespace CoffeeShop.Web.Controllers
                 authProperties);
         }
 
-        // GET: /Account/Logout
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
@@ -97,14 +93,12 @@ namespace CoffeeShop.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST: /Account/Register
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
@@ -124,25 +118,21 @@ namespace CoffeeShop.Web.Controllers
             return View(registerDto);
         }
 
-        // === THÊM 2 HÀM MỚI TỪ BƯỚC 39 ===
 
-        // GET: /Account/Profile
-        [Authorize(Roles = "Customer")] // Chỉ Customer mới xem được
+        [Authorize(Roles = "Customer")] 
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
             var result = await _userApi.GetProfileAsync();
             if (result.Result != ResultValue.Success || result.Data == null)
             {
-                return RedirectToAction("Index", "Home"); // Lỗi thì về trang chủ
+                return RedirectToAction("Index", "Home");
             }
 
-            // Deserialize data
             var dataElement = (JsonElement)result.Data;
             var profile = JsonSerializer.Deserialize<ProfileDto>(dataElement.GetRawText(),
                             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            // Chuyển ProfileDto (hiển thị) sang UpdateProfileDto (form)
             var updateDto = new UpdateProfileDto
             {
                 FullName = profile.FullName,
@@ -152,7 +142,6 @@ namespace CoffeeShop.Web.Controllers
             return View(updateDto);
         }
 
-        // POST: /Account/Profile
         [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<IActionResult> Profile(UpdateProfileDto updateDto)
@@ -171,12 +160,9 @@ namespace CoffeeShop.Web.Controllers
 
             TempData["Success"] = "Cập nhật thông tin thành công!";
 
-            // QUAN TRỌNG: Cập nhật lại Cookie (Claim) để "Chào, [Tên]" thay đổi
-            // 1. Lấy thông tin đăng nhập cũ
             var oldPrincipal = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (oldPrincipal.Principal != null)
             {
-                // 2. Tạo claims mới với tên mới
                 var newClaims = oldPrincipal.Principal.Claims.ToList();
                 var nameClaim = newClaims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
                 if (nameClaim != null)
@@ -184,16 +170,14 @@ namespace CoffeeShop.Web.Controllers
                     newClaims[newClaims.IndexOf(nameClaim)] = new Claim(ClaimTypes.Name, updateDto.FullName);
                 }
 
-                // 3. Đăng nhập lại (ghi đè cookie)
                 var newIdentity = new ClaimsIdentity(newClaims, CookieAuthenticationDefaults.AuthenticationScheme);
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(newIdentity),
-                    oldPrincipal.Properties); // Dùng lại auth properties cũ
+                    oldPrincipal.Properties); 
             }
 
-            return View(updateDto); // Ở lại trang Profile và hiển thị thông báo
+            return View(updateDto); 
         }
-        // ============================
     }
 }

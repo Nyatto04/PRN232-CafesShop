@@ -71,7 +71,6 @@ namespace Services.Implementations
 
         public async Task<BaseResponseDto> CreateUserAsync(CreateUserDto createUserDto)
         {
-            // Kiểm tra Role có hợp lệ không
             if (createUserDto.Role != "Staff" && createUserDto.Role != "Customer")
             {
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Role không hợp lệ. Chỉ chấp nhận 'Staff' hoặc 'Customer'." };
@@ -91,7 +90,7 @@ namespace Services.Implementations
                 FullName = createUserDto.FullName,
                 PhoneNumber = createUserDto.PhoneNumber,
                 IsActive = true,
-                EmailConfirmed = true // Admin tạo thì cho confirm luôn
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, createUserDto.Password);
@@ -102,11 +101,9 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = $"Tạo user thất bại: {errors}" };
             }
 
-            // Gán role
             await _userManager.AddToRoleAsync(user, createUserDto.Role);
             if (createUserDto.Role == "Staff")
             {
-                // Staff cũng là 1 customer
                 await _userManager.AddToRoleAsync(user, "Customer");
             }
 
@@ -144,16 +141,11 @@ namespace Services.Implementations
                 return new BaseResponseDto { Result = ResultValue.NoData, Message = "Không tìm thấy người dùng" };
             }
 
-            // Không cho xóa chính mình
-            // (Bạn có thể lấy currentUserId từ HttpContextAccessor nếu inject vào)
-
-            // Không cho xóa Admin
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = "Không thể xóa tài khoản Admin" };
             }
 
-            // Dùng xóa vĩnh viễn (hoặc bạn có thể chỉ set IsActive = false)
             var result = await _userManager.DeleteAsync(user);
 
             if (!result.Succeeded)

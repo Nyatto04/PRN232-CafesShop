@@ -14,8 +14,6 @@ namespace Services.Implementations
         private readonly MailSettings _mailSettings;
         private readonly ILogger<MailService> _logger;
 
-        // Dùng IOptions để inject MailSettings từ appsettings.json
-        // Dùng ILogger để ghi log nếu có lỗi
         public MailService(IOptions<MailSettings> mailSettings, ILogger<MailService> logger)
         {
             _mailSettings = mailSettings.Value;
@@ -33,29 +31,23 @@ namespace Services.Implementations
                 email.Subject = subject;
 
                 var builder = new BodyBuilder();
-                builder.HtmlBody = htmlBody; // Nội dung email (HTML)
+                builder.HtmlBody = htmlBody;
                 email.Body = builder.ToMessageBody();
 
-                // Dùng SmtpClient của MailKit
                 using var smtp = new SmtpClient();
 
-                // Kết nối tới server SMTP
                 await smtp.ConnectAsync(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
 
-                // Xác thực bằng Mật khẩu ứng dụng
                 await smtp.AuthenticateAsync(_mailSettings.Mail, _mailSettings.Password);
 
-                // Gửi email
                 await smtp.SendAsync(email);
 
-                // Ngắt kết nối
                 await smtp.DisconnectAsync(true);
 
                 return new BaseResponseDto { Result = ResultValue.Success, Message = "Email đã được gửi." };
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi để bạn có thể xem trong cửa sổ Output (Debug)
                 _logger.LogError(ex, $"Lỗi khi gửi email đến {toEmail}: {ex.Message}");
                 return new BaseResponseDto { Result = ResultValue.Failed, Message = $"Gửi email thất bại: {ex.Message}" };
             }
