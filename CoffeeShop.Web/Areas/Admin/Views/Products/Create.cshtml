@@ -1,5 +1,6 @@
 ﻿@using Shared.Dtos.ProductDtos
-@model CreateUpdateProductDto
+@using CoffeeShop.Web.Areas.Admin.Models
+@model CreateProductViewModel 
 
 @{
     ViewData["Title"] = "Tạo sản phẩm mới";
@@ -10,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="mb-3">
@@ -45,8 +46,9 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label">Link hình ảnh</label>
-                <input asp-for="ImageUrl" class="form-control" />
+                <label asp-for="ImageFile" class="form-label">Chọn ảnh sản phẩm</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                <input type="hidden" asp-for="ImageUrl" />
             </div>
 
             <div class="mb-3">
@@ -68,5 +70,5 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+        <partial name="_ValidationScriptsPartial" />
 }
