@@ -1,8 +1,11 @@
 ﻿using CoffeeShop.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.Dtos.ProductDtos;
+using CoffeeShop.Web.Areas.Admin.Models; 
+using Microsoft.AspNetCore.Hosting;    
+using System.IO;                       
 
 namespace CoffeeShop.Web.Areas.Admin.Controllers
 {
@@ -11,10 +14,12 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductApiService _productApi;
+        private readonly IWebHostEnvironment _webHostEnvironment; 
 
-        public ProductsController(IProductApiService productApi)
+        public ProductsController(IProductApiService productApi, IWebHostEnvironment webHostEnvironment)
         {
             _productApi = productApi;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -31,17 +36,39 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
-            await LoadCategoriesAsync(); 
-            return View();
+            await LoadCategoriesAsync();
+            return View(new CreateProductViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateUpdateProductDto productDto)
+        public async Task<IActionResult> Create(CreateProductViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var result = await _productApi.CreateProductAsync(productDto);
+                if (viewModel.ImageFile != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(viewModel.ImageFile.FileName);
+                    string productPath = Path.Combine(wwwRootPath, "images", "products");
+                    string filePath = Path.Combine(productPath, fileName);
+
+                    if (!Directory.Exists(productPath)) Directory.CreateDirectory(productPath);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await viewModel.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    viewModel.ImageUrl = $"/images/products/{fileName}";
+                }
+                else
+                {
+                    viewModel.ImageUrl = "/images/placeholder.jpg";
+                }
+
+                var result = await _productApi.CreateProductAsync(viewModel);
+
                 if (result.Result == Shared.Dtos.ResultValue.Success)
                 {
                     return RedirectToAction("Index");
@@ -50,8 +77,9 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
             }
 
             await LoadCategoriesAsync();
-            return View(productDto);
+            return View(viewModel); 
         }
+
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productApi.GetProductByIdAsync(id);
@@ -60,7 +88,7 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var updateDto = new CreateUpdateProductDto
+            var updateDto = new CreateProductViewModel
             {
                 ProductName = product.ProductName,
                 Description = product.Description,
@@ -82,6 +110,7 @@ namespace CoffeeShop.Web.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 var result = await _productApi.UpdateProductAsync(id, productDto);
                 if (result.Result == Shared.Dtos.ResultValue.Success)
                 {
